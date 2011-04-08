@@ -2,7 +2,7 @@
 
 // render_part=1; // gear_tooth_2d()
 // render_part=2; // oshw_logo_2d()
-render_part=3; // 4mm shelled oshw_logo_2d()
+// render_part=3; // 4mm shelled oshw_logo_2d()
 render_part=4; // 1 inch OSHW Coin
 
 module gear_tooth_2d(scale=1.0) {
@@ -55,27 +55,26 @@ if(render_part==3) {
     import_dxf(file="static_files/oshw_logo_2d.dxf");
 }
 
-module oshw_coin(scale=0.1, coin_h=10.0, coin_wall_th=5.0, extension=0.1) {
-  scale([scale,scale,scale]) union() {
+module oshw_coin(scale=0.1, coin_h=10.0, coin_wall_th=4.0, extension=0.1) {
+  scale([scale/200,scale/200,scale/200]) union() {
     difference() {
 	cylinder(r=100.0,h=coin_h,center=false);
 	translate([0,0,coin_wall_th])
 	  cylinder(r=100.0-coin_wall_th,h=coin_h-coin_wall_th+extension,center=false);
-	translate([0,0,-extension])
-	  linear_extrude(file="static_files/oshw_logo_2d.shell_4mm.dxf",height=coin_wall_th/2+extension,center=false);
+	translate([0,0,-extension])  linear_extrude(height=coin_wall_th/2+extension,center=false) 
+	  scale([(100.0-coin_wall_th)/100.0,(100.0-coin_wall_th)/100.0]) 
+	    shell_2d(width=coin_wall_th,steps=32) import_dxf(file="static_files/oshw_logo_2d.dxf");
     }
-    translate([0,0,coin_wall_th]) color([0,0,1.0])
-	linear_extrude(file="static_files/oshw_logo_2d.dxf",height=coin_wall_th/2,center=false);
+    translate([0,0,coin_wall_th]) color([0,0,1.0]) linear_extrude(height=(coin_h-coin_wall_th)/2,center=false)
+	  scale([(100.0-coin_wall_th)/100.0,(100.0-coin_wall_th)/100.0]) import_dxf(file="static_files/oshw_logo_2d.dxf");
     translate([0,0,coin_wall_th-extension]) color([0,0,0])
-	linear_extrude(file="static_files/oshw_logo_2d.shell_4mm.dxf",height=coin_wall_th+extension,center=false);
+	linear_extrude(height=coin_h-coin_wall_th+extension,center=false) scale([(100.0-coin_wall_th)/100.0,(100.0-coin_wall_th)/100.0]) 
+	  shell_2d(width=coin_wall_th,steps=32) import_dxf(file="static_files/oshw_logo_2d.dxf");
   }
 }
 
 if(render_part==4) {
   echo("Rendering OSHW Coin scaled to 25.4mm, aka 1 inch...");
   echo("  Note: Colours aren't preserved in the final STL output.");
-  oshw_coin(scale=0.254/2);
+  oshw_coin(scale=25.4,coin_h=20.0,coin_wall_th=8.0);
 }
-
-
-    
