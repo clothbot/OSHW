@@ -6,8 +6,10 @@
 render_part=4; // 1 inch OSHW Coin
 
 module gear_tooth_2d(scale=1.0) {
-  scale([scale,scale]) projection(cute=true) rotate([0,90,0])
-    cylinder(r1=25.0,r2=24.0/2,h=90.0,center=false);
+  scale([scale,scale]) polygon(
+    points=[ [0,25.0], [90.0,12.0], [90.0,-12.0], [0,-25.0] ]
+    , paths=[ [0,1,2,3] ]
+    );
 }
 
 if(render_part==1) {
@@ -49,9 +51,10 @@ module shell_2d(width=2.0,steps=8,scale_x=1.0,scale_y=1.0) {
 }
 
 if(render_part==3) {
-  // Note: Don't perform shell operation on gear_tooth_2d() directly. It's rather inefficient.
+  // Note: Don't perform shell operation on oshw_logo_2d() directly. It's rather inefficient.
   echo("Rendering 4mm shelled gear_tooth_2d()...");
   shell_2d(width=4.0,steps=16,scale_x=1.0,scale_y=1.0)
+//    oshw_logo_2d(scale=1.0);
     import_dxf(file="static_files/oshw_logo_2d.dxf");
 }
 
