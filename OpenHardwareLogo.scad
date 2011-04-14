@@ -1,9 +1,10 @@
 // OSHW Logo Generator
-use_files=true;
+use_files=false;
+// use_files=true;
 // render_part=1; // gear_tooth_2d()
 // render_part=2; // oshw_logo_2d()
  render_part=3; // 4mm shelled oshw_logo_2d()
-// render_part=4; // 1 inch OSHW Coin
+ render_part=4; // 1 inch OSHW Coin
 
 module gear_tooth_2d(scale=1.0) {
   scale([scale,scale]) polygon(
@@ -54,7 +55,7 @@ if(render_part==3) {
   // Note: Don't perform shell operation on oshw_logo_2d() directly. It's rather inefficient.
   echo("Rendering 4mm shelled gear_tooth_2d()...");
   if(!use_files) shell_2d(width=4.0,steps=16,scale_x=1.0,scale_y=1.0)
-    oshw_logo_2d(scale=1.0);
+    render() oshw_logo_2d(scale=1.0);
   if(use_files) shell_2d(width=4.0,steps=16,scale_x=1.0,scale_y=1.0)
     import_dxf(file="static_files/oshw_logo_2d.dxf");
 }
@@ -66,14 +67,21 @@ module oshw_coin(scale=0.1, coin_h=10.0, coin_wall_th=4.0, extension=0.1) {
 	translate([0,0,coin_wall_th])
 	  cylinder(r=100.0-coin_wall_th,h=coin_h-coin_wall_th+extension,center=false);
 	translate([0,0,-extension])  linear_extrude(height=coin_wall_th/2+extension,center=false) 
-	  scale([(100.0-coin_wall_th)/100.0,(100.0-coin_wall_th)/100.0]) 
-	    shell_2d(width=coin_wall_th,steps=32) import_dxf(file="static_files/oshw_logo_2d.dxf");
+	  scale([(100.0-coin_wall_th)/100.0,(100.0-coin_wall_th)/100.0]) {
+	    if(use_files) shell_2d(width=coin_wall_th,steps=32) import_dxf(file="static_files/oshw_logo_2d.dxf");
+	    if(!use_files) shell_2d(width=coin_wall_th,steps=32) render() oshw_logo_2d(scale=1.0);
+	  }
     }
     translate([0,0,coin_wall_th]) color([0,0,1.0]) linear_extrude(height=(coin_h-coin_wall_th)/2,center=false)
-	  scale([(100.0-coin_wall_th)/100.0,(100.0-coin_wall_th)/100.0]) import_dxf(file="static_files/oshw_logo_2d.dxf");
+	  scale([(100.0-coin_wall_th)/100.0,(100.0-coin_wall_th)/100.0]) {
+	    if(use_files) import_dxf(file="static_files/oshw_logo_2d.dxf");
+	    if(!use_files) render() oshw_logo_2d(scale=1.0);
+	  }
     translate([0,0,coin_wall_th-extension]) color([0,0,0])
-	linear_extrude(height=coin_h-coin_wall_th+extension,center=false) scale([(100.0-coin_wall_th)/100.0,(100.0-coin_wall_th)/100.0]) 
-	  shell_2d(width=coin_wall_th,steps=32) import_dxf(file="static_files/oshw_logo_2d.dxf");
+	linear_extrude(height=coin_h-coin_wall_th+extension,center=false) scale([(100.0-coin_wall_th)/100.0,(100.0-coin_wall_th)/100.0]) {
+	    if(use_files) shell_2d(width=coin_wall_th,steps=32) import_dxf(file="static_files/oshw_logo_2d.dxf");
+	    if(!use_files) shell_2d(width=coin_wall_th,steps=32) render() oshw_logo_2d(scale=1.0);
+	}
   }
 }
 
